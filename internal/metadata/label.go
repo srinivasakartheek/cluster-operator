@@ -23,11 +23,19 @@ func Label(instanceName string) label {
 	}
 }
 
-func GetLabels(instanceName string, instanceLabels map[string]string) label {
+func GetLabels(instanceName string, instanceLabels map[string]string, ignoredLabelPrefixes []string) label {
 	allLabels := Label(instanceName)
 
 	for label, value := range instanceLabels {
-		if !strings.HasPrefix(label, "app.kubernetes.io") {
+		ignored := false
+		for _, ignoredLabelPrefix := range ignoredLabelPrefixes {
+			if strings.HasPrefix(label, ignoredLabelPrefix) {
+				ignored = true
+				break
+			}
+		}
+
+		if !ignored {
 			allLabels[label] = value
 		}
 	}

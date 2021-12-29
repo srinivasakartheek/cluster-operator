@@ -123,7 +123,7 @@ func (builder *StatefulSetBuilder) Update(object client.Object) error {
 	sts.Annotations = metadata.ReconcileAndFilterAnnotations(sts.Annotations, builder.Instance.Annotations)
 
 	//Labels
-	sts.Labels = metadata.GetLabels(builder.Instance.Name, builder.Instance.Labels)
+	sts.Labels = metadata.GetLabels(builder.Instance.Name, builder.Instance.Labels, builder.IgnoredLabelPrefixes)
 
 	// PVC storage capacity
 	updatePersistenceStorageCapacity(&sts.Spec.VolumeClaimTemplates, builder.Instance.Spec.Persistence.Storage)

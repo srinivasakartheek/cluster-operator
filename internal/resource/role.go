@@ -47,7 +47,7 @@ func (builder *RoleBuilder) UpdateMayRequireStsRecreate() bool {
 
 func (builder *RoleBuilder) Update(object client.Object) error {
 	role := object.(*rbacv1.Role)
-	role.Labels = metadata.GetLabels(builder.Instance.Name, builder.Instance.Labels)
+	role.Labels = metadata.GetLabels(builder.Instance.Name, builder.Instance.Labels, builder.IgnoredLabelPrefixes)
 	role.Annotations = metadata.ReconcileAndFilterAnnotations(role.GetAnnotations(), builder.Instance.Annotations)
 	role.Rules = []rbacv1.PolicyRule{
 		{

@@ -67,7 +67,7 @@ func (builder *ServerConfigMapBuilder) Build() (client.Object, error) {
 		ObjectMeta: metav1.ObjectMeta{
 			Name:        builder.Instance.ChildResourceName(ServerConfigMapName),
 			Namespace:   builder.Instance.Namespace,
-			Labels:      metadata.GetLabels(builder.Instance.Name, builder.Instance.Labels),
+			Labels:      metadata.GetLabels(builder.Instance.Name, builder.Instance.Labels, builder.IgnoredLabelPrefixes),
 			Annotations: metadata.ReconcileAndFilterAnnotations(nil, builder.Instance.Annotations),
 		},
 	}, nil

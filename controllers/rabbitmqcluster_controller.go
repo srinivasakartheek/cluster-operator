@@ -57,12 +57,13 @@ const (
 // RabbitmqClusterReconciler reconciles a RabbitmqCluster object
 type RabbitmqClusterReconciler struct {
 	client.Client
-	Scheme        *runtime.Scheme
-	Namespace     string
-	Recorder      record.EventRecorder
-	ClusterConfig *rest.Config
-	Clientset     *kubernetes.Clientset
-	PodExecutor   PodExecutor
+	Scheme               *runtime.Scheme
+	Namespace            string
+	Recorder             record.EventRecorder
+	ClusterConfig        *rest.Config
+	Clientset            *kubernetes.Clientset
+	PodExecutor          PodExecutor
+	IgnoredLabelPrefixes []string
 }
 
 // the rbac rule requires an empty row at the end to render
@@ -146,8 +147,9 @@ func (r *RabbitmqClusterReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 		"spec", string(instanceSpec))
 
 	resourceBuilder := resource.RabbitmqResourceBuilder{
-		Instance: rabbitmqCluster,
-		Scheme:   r.Scheme,
+		Instance:             rabbitmqCluster,
+		Scheme:               r.Scheme,
+		IgnoredLabelPrefixes: r.IgnoredLabelPrefixes,
 	}
 
 	builders, err := resourceBuilder.ResourceBuilders()

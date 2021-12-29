@@ -47,7 +47,7 @@ func (builder *ServiceAccountBuilder) UpdateMayRequireStsRecreate() bool {
 
 func (builder *ServiceAccountBuilder) Update(object client.Object) error {
 	serviceAccount := object.(*corev1.ServiceAccount)
-	serviceAccount.Labels = metadata.GetLabels(builder.Instance.Name, builder.Instance.Labels)
+	serviceAccount.Labels = metadata.GetLabels(builder.Instance.Name, builder.Instance.Labels, builder.IgnoredLabelPrefixes)
 	serviceAccount.Annotations = metadata.ReconcileAndFilterAnnotations(serviceAccount.GetAnnotations(), builder.Instance.Annotations)
 
 	if err := controllerutil.SetControllerReference(builder.Instance, serviceAccount, builder.Scheme); err != nil {

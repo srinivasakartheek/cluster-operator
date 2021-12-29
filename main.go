@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"k8s.io/client-go/kubernetes"
@@ -62,6 +63,13 @@ func main() {
 	// If the environment variable is not set Getenv returns an empty string which ctrl.Options.Namespace takes to mean all namespaces should be watched
 	operatorScopeNamespace := os.Getenv("OPERATOR_SCOPE_NAMESPACE")
 
+	ignoredLabelPrefixes := []string{"app.kubernetes.io"}
+	if ignoredLabelPrefixesStr, ok := os.LookupEnv("IGNORE_LABELS_WITH_PREFIXES"); ok {
+		for _, prefix := range strings.Split(ignoredLabelPrefixesStr, ",") {
+			ignoredLabelPrefixes = append(ignoredLabelPrefixes, strings.TrimSpace(prefix))
+		}
+	}
+
 	options := ctrl.Options{
 		Scheme:                  scheme,
 		MetricsBindAddress:      metricsAddr,
@@ -105,13 +113,14 @@ func main() {
 	}
 
 	err = (&controllers.RabbitmqClusterReconciler{
-		Client:        mgr.GetClient(),
-		Scheme:        mgr.GetScheme(),
-		Recorder:      mgr.GetEventRecorderFor(controllerName),
-		Namespace:     operatorNamespace,
-		ClusterConfig: clusterConfig,
-		Clientset:     kubernetes.NewForConfigOrDie(clusterConfig),
-		PodExecutor:   controllers.NewPodExecutor(),
+		Client:               mgr.GetClient(),
+		Scheme:               mgr.GetScheme(),
+		Recorder:             mgr.GetEventRecorderFor(controllerName),
+		Namespace:            operatorNamespace,
+		ClusterConfig:        clusterConfig,
+		Clientset:            kubernetes.NewForConfigOrDie(clusterConfig),
+		PodExecutor:          controllers.NewPodExecutor(),
+		IgnoredLabelPrefixes: ignoredLabelPrefixes,
 	}).SetupWithManager(mgr)
 	if err != nil {
 		log.Error(err, "unable to create controller", controllerName)

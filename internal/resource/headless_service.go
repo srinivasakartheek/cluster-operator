@@ -48,7 +48,7 @@ func (builder *HeadlessServiceBuilder) Build() (client.Object, error) {
 
 func (builder *HeadlessServiceBuilder) Update(object client.Object) error {
 	service := object.(*corev1.Service)
-	service.Labels = metadata.GetLabels(builder.Instance.Name, builder.Instance.Labels)
+	service.Labels = metadata.GetLabels(builder.Instance.Name, builder.Instance.Labels, builder.IgnoredLabelPrefixes)
 	service.Annotations = metadata.ReconcileAndFilterAnnotations(service.GetAnnotations(), builder.Instance.Annotations)
 	service.Spec = corev1.ServiceSpec{
 		Type:            corev1.ServiceTypeClusterIP,

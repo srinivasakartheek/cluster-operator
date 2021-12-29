@@ -16,8 +16,9 @@ import (
 )
 
 type RabbitmqResourceBuilder struct {
-	Instance *rabbitmqv1beta1.RabbitmqCluster
-	Scheme   *runtime.Scheme
+	Instance             *rabbitmqv1beta1.RabbitmqCluster
+	Scheme               *runtime.Scheme
+	IgnoredLabelPrefixes []string
 }
 
 type ResourceBuilder interface {

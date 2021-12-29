@@ -53,7 +53,7 @@ func (builder *ServiceBuilder) UpdateMayRequireStsRecreate() bool {
 func (builder *ServiceBuilder) Update(object client.Object) error {
 	service := object.(*corev1.Service)
 	builder.setAnnotations(service)
-	service.Labels = metadata.GetLabels(builder.Instance.Name, builder.Instance.Labels)
+	service.Labels = metadata.GetLabels(builder.Instance.Name, builder.Instance.Labels, builder.IgnoredLabelPrefixes)
 	service.Spec.Type = builder.Instance.Spec.Service.Type
 	service.Spec.Selector = metadata.LabelSelector(builder.Instance.Name)
 

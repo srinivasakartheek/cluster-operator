@@ -58,7 +58,7 @@ func (builder *ErlangCookieBuilder) UpdateMayRequireStsRecreate() bool {
 
 func (builder *ErlangCookieBuilder) Update(object client.Object) error {
 	secret := object.(*corev1.Secret)
-	secret.Labels = metadata.GetLabels(builder.Instance.Name, builder.Instance.Labels)
+	secret.Labels = metadata.GetLabels(builder.Instance.Name, builder.Instance.Labels, builder.IgnoredLabelPrefixes)
 	secret.Annotations = metadata.ReconcileAndFilterAnnotations(secret.GetAnnotations(), builder.Instance.Annotations)
 
 	if err := controllerutil.SetControllerReference(builder.Instance, secret, builder.Scheme); err != nil {
