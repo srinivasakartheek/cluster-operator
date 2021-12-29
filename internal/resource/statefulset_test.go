@@ -20,7 +20,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	k8sresource "k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	defaultscheme "k8s.io/client-go/kubernetes/scheme"
@@ -43,8 +42,9 @@ var _ = Describe("StatefulSet", func() {
 			Expect(rabbitmqv1beta1.AddToScheme(scheme)).To(Succeed())
 			Expect(defaultscheme.AddToScheme(scheme)).To(Succeed())
 			builder = &resource.RabbitmqResourceBuilder{
-				Instance: &instance,
-				Scheme:   scheme,
+				Instance:             &instance,
+				Scheme:               scheme,
+				IgnoredLabelPrefixes: []string{"app.kubernetes.io"},
 			}
 			stsBuilder = builder.StatefulSet()
 		})
@@ -114,7 +114,7 @@ var _ = Describe("StatefulSet", func() {
 				statefulSet := obj.(*appsv1.StatefulSet)
 
 				expectedPersistentVolumeClaim := corev1.PersistentVolumeClaim{
-					ObjectMeta: v1.ObjectMeta{
+					ObjectMeta: metav1.ObjectMeta{
 						Name:      "persistence",
 						Namespace: instance.Namespace,
 						Labels: map[string]string{
@@ -122,7 +122,7 @@ var _ = Describe("StatefulSet", func() {
 							"app.kubernetes.io/component": "rabbitmq",
 							"app.kubernetes.io/part-of":   "rabbitmq",
 						},
-						OwnerReferences: []v1.OwnerReference{
+						OwnerReferences: []metav1.OwnerReference{
 							{
 								APIVersion:         "rabbitmq.com/v1beta1",
 								Kind:               "RabbitmqCluster",
@@ -225,7 +225,7 @@ var _ = Describe("StatefulSet", func() {
 						ObjectMeta: metav1.ObjectMeta{
 							Name:      "pert-1",
 							Namespace: "foo-namespace",
-							OwnerReferences: []v1.OwnerReference{
+							OwnerReferences: []metav1.OwnerReference{
 								{
 									APIVersion:         "rabbitmq.com/v1beta1",
 									Kind:               "RabbitmqCluster",
@@ -249,7 +249,7 @@ var _ = Describe("StatefulSet", func() {
 						ObjectMeta: metav1.ObjectMeta{
 							Name:      "pert-2",
 							Namespace: "foo-namespace",
-							OwnerReferences: []v1.OwnerReference{
+							OwnerReferences: []metav1.OwnerReference{
 								{
 									APIVersion:         "rabbitmq.com/v1beta1",
 									Kind:               "RabbitmqCluster",
@@ -316,7 +316,7 @@ var _ = Describe("StatefulSet", func() {
 						ObjectMeta: metav1.ObjectMeta{
 							Name:      "pert-1",
 							Namespace: "foo-namespace",
-							OwnerReferences: []v1.OwnerReference{
+							OwnerReferences: []metav1.OwnerReference{
 								{
 									APIVersion:         "rabbitmq.com/v1beta1",
 									Kind:               "RabbitmqCluster",
@@ -340,7 +340,7 @@ var _ = Describe("StatefulSet", func() {
 						ObjectMeta: metav1.ObjectMeta{
 							Name:      "pert-2",
 							Namespace: "foo-namespace",
-							OwnerReferences: []v1.OwnerReference{
+							OwnerReferences: []metav1.OwnerReference{
 								{
 									APIVersion:         "rabbitmq.com/v1beta1",
 									Kind:               "RabbitmqCluster",
@@ -378,8 +378,9 @@ var _ = Describe("StatefulSet", func() {
 			Expect(defaultscheme.AddToScheme(scheme)).To(Succeed())
 
 			builder = &resource.RabbitmqResourceBuilder{
-				Instance: &instance,
-				Scheme:   scheme,
+				Instance:             &instance,
+				Scheme:               scheme,
+				IgnoredLabelPrefixes: []string{"app.kubernetes.io"},
 			}
 
 			stsBuilder = builder.StatefulSet()
@@ -468,8 +469,9 @@ var _ = Describe("StatefulSet", func() {
 				Expect(defaultscheme.AddToScheme(scheme)).To(Succeed())
 
 				builder = &resource.RabbitmqResourceBuilder{
-					Instance: &instance,
-					Scheme:   scheme,
+					Instance:             &instance,
+					Scheme:               scheme,
+					IgnoredLabelPrefixes: []string{"app.kubernetes.io"},
 				}
 			})
 
@@ -1373,7 +1375,7 @@ var _ = Describe("StatefulSet", func() {
 
 			statefulSet.Spec.VolumeClaimTemplates = []corev1.PersistentVolumeClaim{
 				{
-					ObjectMeta: v1.ObjectMeta{
+					ObjectMeta: metav1.ObjectMeta{
 						Name:      "persistence",
 						Namespace: instance.Namespace,
 					},
@@ -1939,7 +1941,7 @@ func extractContainer(containers []corev1.Container, containerName string) corev
 func generateRabbitmqCluster() rabbitmqv1beta1.RabbitmqCluster {
 	storage := k8sresource.MustParse("10Gi")
 	return rabbitmqv1beta1.RabbitmqCluster{
-		ObjectMeta: v1.ObjectMeta{
+		ObjectMeta: metav1.ObjectMeta{
 			Name:      "foo",
 			Namespace: "foo-namespace",
 		},

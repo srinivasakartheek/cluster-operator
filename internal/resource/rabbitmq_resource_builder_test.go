@@ -14,7 +14,6 @@ import (
 	. "github.com/onsi/gomega"
 	rabbitmqv1beta1 "github.com/rabbitmq/cluster-operator/api/v1beta1"
 	"github.com/rabbitmq/cluster-operator/internal/resource"
-	. "github.com/rabbitmq/cluster-operator/internal/resource"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	defaultscheme "k8s.io/client-go/kubernetes/scheme"
@@ -51,17 +50,17 @@ var _ = Describe("RabbitmqResourceBuilder", func() {
 			expectedLen := 10
 			Expect(len(resourceBuilders)).To(Equal(expectedLen))
 
-			expectedBuildersInOrder := []ResourceBuilder{
-				&HeadlessServiceBuilder{},
-				&ServiceBuilder{},
-				&ErlangCookieBuilder{},
-				&DefaultUserSecretBuilder{},
-				&RabbitmqPluginsConfigMapBuilder{},
-				&ServerConfigMapBuilder{},
-				&ServiceAccountBuilder{},
-				&RoleBuilder{},
-				&RoleBindingBuilder{},
-				&StatefulSetBuilder{},
+			expectedBuildersInOrder := []resource.ResourceBuilder{
+				&resource.HeadlessServiceBuilder{},
+				&resource.ServiceBuilder{},
+				&resource.ErlangCookieBuilder{},
+				&resource.DefaultUserSecretBuilder{},
+				&resource.RabbitmqPluginsConfigMapBuilder{},
+				&resource.ServerConfigMapBuilder{},
+				&resource.ServiceAccountBuilder{},
+				&resource.RoleBuilder{},
+				&resource.RoleBindingBuilder{},
+				&resource.StatefulSetBuilder{},
 			}
 
 			for i := 0; i < expectedLen; i++ {

@@ -38,8 +38,9 @@ var _ = Describe("HeadlessService", func() {
 		instance.Namespace = "foo"
 		instance.Name = "foo"
 		builder = &resource.RabbitmqResourceBuilder{
-			Instance: &instance,
-			Scheme:   scheme,
+			Instance:             &instance,
+			Scheme:               scheme,
+			IgnoredLabelPrefixes: []string{"app.kubernetes.io"},
 		}
 		serviceBuilder = builder.HeadlessService()
 	})

@@ -54,8 +54,9 @@ var _ = Describe("GenerateServerConfigMap", func() {
 		Expect(rabbitmqv1beta1.AddToScheme(scheme)).To(Succeed())
 		Expect(defaultscheme.AddToScheme(scheme)).To(Succeed())
 		builder = &resource.RabbitmqResourceBuilder{
-			Instance: &instance,
-			Scheme:   scheme,
+			Instance:             &instance,
+			Scheme:               scheme,
+			IgnoredLabelPrefixes: []string{"app.kubernetes.io"},
 		}
 		configMapBuilder = builder.ServerConfigMap()
 	})

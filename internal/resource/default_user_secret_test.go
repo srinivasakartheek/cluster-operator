@@ -14,7 +14,6 @@ import (
 
 	"gopkg.in/ini.v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	defaultscheme "k8s.io/client-go/kubernetes/scheme"
 
@@ -39,14 +38,15 @@ var _ = Describe("DefaultUserSecret", func() {
 		Expect(rabbitmqv1beta1.AddToScheme(scheme)).To(Succeed())
 		Expect(defaultscheme.AddToScheme(scheme)).To(Succeed())
 		instance = rabbitmqv1beta1.RabbitmqCluster{
-			ObjectMeta: v1.ObjectMeta{
+			ObjectMeta: metav1.ObjectMeta{
 				Name:      "a name",
 				Namespace: "a namespace",
 			},
 		}
 		builder = &resource.RabbitmqResourceBuilder{
-			Instance: &instance,
-			Scheme:   scheme,
+			Instance:             &instance,
+			Scheme:               scheme,
+			IgnoredLabelPrefixes: []string{"app.kubernetes.io"},
 		}
 		defaultUserSecretBuilder = builder.DefaultUserSecret()
 	})

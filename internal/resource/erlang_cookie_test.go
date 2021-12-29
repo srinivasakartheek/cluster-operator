@@ -16,7 +16,6 @@ import (
 	defaultscheme "k8s.io/client-go/kubernetes/scheme"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -39,14 +38,15 @@ var _ = Describe("ErlangCookie", func() {
 		Expect(rabbitmqv1beta1.AddToScheme(scheme)).To(Succeed())
 		Expect(defaultscheme.AddToScheme(scheme)).To(Succeed())
 		instance = rabbitmqv1beta1.RabbitmqCluster{
-			ObjectMeta: v1.ObjectMeta{
+			ObjectMeta: metav1.ObjectMeta{
 				Name:      "a name",
 				Namespace: "a namespace",
 			},
 		}
 		builder = &resource.RabbitmqResourceBuilder{
-			Instance: &instance,
-			Scheme:   scheme,
+			Instance:             &instance,
+			Scheme:               scheme,
+			IgnoredLabelPrefixes: []string{"app.kubernetes.io"},
 		}
 		erlangCookieBuilder = builder.ErlangCookie()
 	})
